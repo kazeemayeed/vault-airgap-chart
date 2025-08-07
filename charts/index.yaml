@@ -1,0 +1,3 @@
+mkdir -p charts
+cp mychart-0.1.0.tgz charts/
+helm repo index charts/ --url https://kazeem.github.io/my-helm-charts/charts/
