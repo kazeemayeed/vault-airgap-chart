@@ -1,14 +1,20 @@
+{{- if .Values.lifecycleHooks.postInstall }}
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: vault-post-install
+  name: {{ include "vault-airgap.fullname" . }}-post-install
   annotations:
     "helm.sh/hook": post-install
 spec:
   template:
     spec:
       containers:
-        - name: init
-          image: busybox
-          command: ['sh', '-c', 'echo Post-install tasks completed']
+      {{- range .Values.lifecycleHooks.postInstall }}
+        - name: {{ .name }}
+          image: alpine:3.17
+          command: {{ toJson .command }}
+          args: {{ toJson .args }}
+      {{- end }}
       restartPolicy: Never
+  backoffLimit: 1
+{{- end }}

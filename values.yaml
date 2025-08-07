@@ -1,13 +1,25 @@
 replicaCount: 1
 
 image:
-  repository: registry.internal.local/vault
-  tag: "1.13.3"
+  repository: myregistry.local/vault
+  tag: "1.13.0"
   pullPolicy: IfNotPresent
 
 service:
   type: ClusterIP
   port: 8200
+
+serviceAccount:
+  create: true
+  name: ""
+
+rbac:
+  create: true
+
+persistence:
+  enabled: true
+  size: 8Gi
+  storageClass: ""
 
 resources:
   limits:
@@ -17,20 +29,17 @@ resources:
     cpu: 250m
     memory: 256Mi
 
-vault:
-  logLevel: "info"
-  config: |
-    ui = true
-    storage "file" {
-      path = "/vault/data"
-    }
-    listener "tcp" {
-      address     = "0.0.0.0:8200"
-      tls_disable = 1
-    }
-    disable_mlock = true
-
 backup:
-  enabled: true
-  schedule: "0 3 * * *"
-  image: registry.internal.local/backup-tool:latest
+  enabled: false
+  schedule: "0 2 * * *"
+  retentionDays: 7
+
+lifecycleHooks:
+  preInstall:
+    - name: init-config
+      command: ["/bin/sh", "-c"]
+      args: ["echo 'Running pre-install hook for config setup'"]
+  postInstall:
+    - name: notify
+      command: ["/bin/sh", "-c"]
+      args: ["echo 'Vault installation completed'"]

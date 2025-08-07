@@ -1,14 +1,20 @@
+{{- if .Values.lifecycleHooks.preInstall }}
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: vault-pre-install
+  name: {{ include "vault-airgap.fullname" . }}-pre-install
   annotations:
     "helm.sh/hook": pre-install
 spec:
   template:
     spec:
       containers:
-        - name: init
-          image: busybox
-          command: ['sh', '-c', 'echo Pre-install tasks completed']
+      {{- range .Values.lifecycleHooks.preInstall }}
+        - name: {{ .name }}
+          image: alpine:3.17
+          command: {{ toJson .command }}
+          args: {{ toJson .args }}
+      {{- end }}
       restartPolicy: Never
+  backoffLimit: 1
+{{- end }}

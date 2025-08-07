@@ -1,0 +1,9 @@
+Thank you for installing Vault in an air-gapped mode!
+
+To verify:
+  kubectl get pods -l app.kubernetes.io/name=vault-airgap
+
+Vault UI should be accessible via:
+  kubectl port-forward svc/{{ include "vault-airgap.fullname" . }} 8200:8200
+
+Ensure your cluster has pulled images from the internal registry.
