@@ -1,13 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: vault
+  name: {{ include "vault-airgap.fullname" . }}
 spec:
   type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.service.port }}
-      targetPort: http
-      protocol: TCP
-      name: http
+      targetPort: 8200
   selector:
-    app: vault
+    app: {{ include "vault-airgap.name" . }}

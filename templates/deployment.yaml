@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "vault-airgap.fullname" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "vault-airgap.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "vault-airgap.name" . }}
+    spec:
+      serviceAccountName: {{ include "vault-airgap.serviceAccountName" . }}
+      containers:
+        - name: vault
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8200
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: vault-data
+              mountPath: /vault/data
+      volumes:
+        - name: vault-data
+          persistentVolumeClaim:
+            claimName: {{ include "vault-airgap.fullname" . }}-pvc
