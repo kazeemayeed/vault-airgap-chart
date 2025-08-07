@@ -1,6 +1,11 @@
 apiVersion: v2
 name: vault-airgap
+description: A production-grade, air-gapped Helm chart for deploying Vault securely in restricted networks.
+type: application
 version: 0.1.0
-description: A production-grade Vault Helm chart for air-gapped deployments
-maintainers:
-  - name: Kazeem Mohammed
+appVersion: "1.13.0"
+keywords:
+  - vault
+  - airgap
+  - security
+home: https://www.vaultproject.io/
