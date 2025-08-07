@@ -1,0 +1,6 @@
+apiVersion: v2
+name: vault-airgap
+version: 0.1.0
+description: A production-grade Vault Helm chart for air-gapped deployments
+maintainers:
+  - name: Kazeem Mohammed
