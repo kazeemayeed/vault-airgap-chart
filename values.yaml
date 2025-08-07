@@ -1,0 +1,36 @@
+replicaCount: 1
+
+image:
+  repository: registry.internal.local/vault
+  tag: "1.13.3"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8200
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+vault:
+  logLevel: "info"
+  config: |
+    ui = true
+    storage "file" {
+      path = "/vault/data"
+    }
+    listener "tcp" {
+      address     = "0.0.0.0:8200"
+      tls_disable = 1
+    }
+    disable_mlock = true
+
+backup:
+  enabled: true
+  schedule: "0 3 * * *"
+  image: registry.internal.local/backup-tool:latest

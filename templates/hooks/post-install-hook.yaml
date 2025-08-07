@@ -1,0 +1,14 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: vault-post-install
+  annotations:
+    "helm.sh/hook": post-install
+spec:
+  template:
+    spec:
+      containers:
+        - name: init
+          image: busybox
+          command: ['sh', '-c', 'echo Post-install tasks completed']
+      restartPolicy: Never
