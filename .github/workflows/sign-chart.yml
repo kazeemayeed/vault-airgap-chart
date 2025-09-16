@@ -34,14 +34,14 @@ jobs:
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          helm package ./vault-airgap-chart --sign --key "<KEY_ID>" --passphrase "$GPG_PASSPHRASE"
+          helm package ./vault-airgap-chart --sign --key "1A34BC022C84A24A7B599F5C0CE6668138414D27" --passphrase "$GPG_PASSPHRASE"
           helm repo index . --url https://kazeemayeed.github.io/vault-airgap-chart/
 
       # Push signed chart to GitHub Pages branch
       - name: Push to GitHub Pages
         run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
+          git config user.name "kazeem"
+          git config user.email "kazeemayeed@gmail.com"
           git checkout gh-pages || git checkout -b gh-pages
           cp vault-airgap-chart-*.tgz .
           cp index.yaml .
