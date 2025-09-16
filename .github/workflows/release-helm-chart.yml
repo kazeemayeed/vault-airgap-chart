@@ -35,6 +35,10 @@ jobs:
           echo "pinentry-mode loopback" >> $GNUPGHOME/gpg.conf
           echo "GNUPGHOME=$GNUPGHOME" >> $GITHUB_ENV
 
+      # Optional: list keys to confirm
+      - name: List imported GPG keys
+        run: gpg --list-secret-keys --keyid-format LONG
+
       # 5. Install yq for version bump
       - name: Install yq
         run: sudo snap install yq
@@ -54,7 +58,8 @@ jobs:
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          helm package . --sign --key "DD77F08007006629"
+          echo "Signing Helm chart with temporary keyring"
+          helm package . --sign --key "DD77F08007006629" --keyring $GNUPGHOME/pubring.kbx
           helm repo index . --url https://raw.githubusercontent.com/kazeemayeed/vault-airgap-chart/main/
 
       # 8. Commit & Push changes
