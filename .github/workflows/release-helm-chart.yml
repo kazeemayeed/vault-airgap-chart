@@ -1,4 +1,4 @@
-name: Release Signed Helm Chart
+name: Release Helm Chart (Unsigned)
 
 on:
   workflow_dispatch:
@@ -19,31 +19,11 @@ jobs:
       - name: Set up Helm
         run: curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
-      # 3. Install GPG
-      - name: Install GPG
-        run: sudo apt-get update && sudo apt-get install -y gnupg2
-
-      # 4. Import GPG key from Base64
-      - name: Import GPG key
-        env:
-          GPG_PRIVATE_KEY_B64: ${{ secrets.GPG_PRIVATE_KEY_B64 }}
-        run: |
-          mkdir -p ~/.gnupg
-          chmod 700 ~/.gnupg
-          export GNUPGHOME=$(mktemp -d)
-          echo "$GPG_PRIVATE_KEY_B64" | base64 --decode | gpg --batch --import
-          echo "pinentry-mode loopback" >> $GNUPGHOME/gpg.conf
-          echo "GNUPGHOME=$GNUPGHOME" >> $GITHUB_ENV
-
-      # 5. Debug: List imported keys
-      - name: List imported GPG keys
-        run: gpg --list-secret-keys --keyid-format LONG
-
-      # 6. Install yq for version bump
+      # 3. Install yq (for version bump)
       - name: Install yq
         run: sudo snap install yq
 
-      # 7. Update Chart version (patch)
+      # 4. Update Chart version (patch)
       - name: Update Chart version
         run: |
           CHART_FILE="./Chart.yaml"
@@ -53,19 +33,17 @@ jobs:
           yq e -i ".version = \"$NEW_VERSION\"" $CHART_FILE
           echo "Updated Chart version to $NEW_VERSION"
 
-      # 8. Package & Sign Helm Chart
-      - name: Package & Sign Helm Chart
-        env:
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+      # 5. Package Helm Chart (unsigned)
+      - name: Package Helm Chart
         run: |
-          helm package . --sign --key "DD77F08007006629" --keyring $GNUPGHOME/pubring.kbx
+          helm package .
           helm repo index . --url https://raw.githubusercontent.com/kazeemayeed/vault-airgap-chart/main/
 
-      # 9. Commit & Push changes
+      # 6. Commit & Push changes
       - name: Commit & Push changes
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add vault-airgap-*.tgz vault-airgap-*.prov index.yaml Chart.yaml
+          git add vault-airgap-*.tgz index.yaml Chart.yaml
           git commit -m "Release Helm chart version $(yq e '.version' Chart.yaml)" || echo "No changes to commit"
           git push origin main
