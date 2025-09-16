@@ -1,0 +1,55 @@
+name: Release Signed Helm Chart
+
+on:
+  workflow_dispatch:       # Manual trigger
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Helm
+        run: curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+      - name: Install GPG
+        run: sudo apt-get update && sudo apt-get install -y gnupg2
+
+      - name: Import GPG key
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        run: |
+          echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+          echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
+
+      - name: Install yq
+        run: sudo snap install yq
+
+      - name: Update Chart version
+        run: |
+          CHART_FILE="./vault-airgap-chart/Chart.yaml"
+          OLD_VERSION=$(yq e '.version' $CHART_FILE)
+          echo "Current version: $OLD_VERSION"
+          NEW_VERSION=$(echo $OLD_VERSION | awk -F. -v OFS=. '{$NF++; print}')
+          yq e -i ".version = \"$NEW_VERSION\"" $CHART_FILE
+          echo "Updated Chart version to $NEW_VERSION"
+
+      - name: Package & Sign Helm Chart
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: |
+          helm package ./vault-airgap-chart --sign --key "DD77F08007006629"
+          helm repo index . --url https://raw.githubusercontent.com/kazeemayeed/vault-airgap-chart/main/
+
+      - name: Commit & Push changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add vault-airgap-*.tgz vault-airgap-*.prov index.yaml vault-airgap-chart/Chart.yaml
+          git commit -m "Release Helm chart version $(yq e '.version' vault-airgap-chart/Chart.yaml)" || echo "No changes to commit"
+          git push origin main
