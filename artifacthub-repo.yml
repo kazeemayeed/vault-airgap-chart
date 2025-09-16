@@ -1,0 +1,7 @@
+name: vault-airgap-chart
+type: helm
+url: https://github.com/kazeemayeed/vault-airgap-chart
+owners:
+  - name: kazeem mohammed
+    email: your-email@example.com
+repositoryID: "374b13af-88de-4b6b-b40a-7765e629cc55"
