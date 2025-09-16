@@ -32,7 +32,7 @@ jobs:
 
       - name: Update Chart version
         run: |
-          CHART_FILE="./vault-airgap-chart/Chart.yaml"
+          CHART_FILE="./Chart.yaml"
           OLD_VERSION=$(yq e '.version' $CHART_FILE)
           echo "Current version: $OLD_VERSION"
           NEW_VERSION=$(echo $OLD_VERSION | awk -F. -v OFS=. '{$NF++; print}')
@@ -43,7 +43,7 @@ jobs:
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          helm package ./vault-airgap-chart --sign --key "DD77F08007006629"
+          helm package . --sign --key "DD77F08007006629"
           helm repo index . --url https://raw.githubusercontent.com/kazeemayeed/vault-airgap-chart/main/
 
       - name: Commit & Push changes
