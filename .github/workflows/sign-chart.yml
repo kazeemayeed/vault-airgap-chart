@@ -35,13 +35,12 @@ jobs:
             --key "DD77F08007006629"
           helm repo index . --url https://kazeemayeed.github.io/vault-airgap-chart/
 
-      - name: Push to GitHub Pages
+      - name: Push to main
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git fetch origin main || true
           git checkout main
           cp vault-airgap-*.tgz vault-airgap-*.prov index.yaml .
           git add vault-airgap-*.tgz vault-airgap-*.prov index.yaml
           git commit -m "Release signed chart" || echo "No changes to commit"
-          git push
+          git push origin main
