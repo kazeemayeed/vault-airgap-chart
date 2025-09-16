@@ -3,7 +3,28 @@ entries:
   vault-airgap:
   - apiVersion: v2
     appVersion: 1.13.0
-    created: "2025-09-16T03:33:58.1381796-05:00"
+    created: "2025-09-16T10:27:41.696595672Z"
+    description: A production-grade, air-gapped Helm chart for deploying Vault securely
+      in restricted networks.
+    digest: b4a861bf3175a5a284b3325f73678ceefdfa7622b132c9915ff4bcb19813f7b4
+    home: https://www.vaultproject.io/
+    icon: https://raw.githubusercontent.com/kazeemayeed/vault-airgap-chart/main/vault-icon.png
+    keywords:
+    - vault
+    - airgap
+    - security
+    maintainers:
+    - name: kazeem Mohammed
+    name: vault-airgap
+    sources:
+    - https://github.com/kazeemayeed/vault-airgap
+    type: application
+    urls:
+    - https://raw.githubusercontent.com/kazeemayeed/vault-airgap-chart/main/vault-airgap-1.3.3.tgz
+    version: 1.3.3
+  - apiVersion: v2
+    appVersion: 1.13.0
+    created: "2025-09-16T10:27:41.706200882Z"
     description: A production-grade, air-gapped Helm chart for deploying Vault securely
       in restricted networks.
     digest: b93576a84263d40cb3803f730a39e03cd1a2a17f455eb99bbb16b12f7642ad70
@@ -20,11 +41,11 @@ entries:
     - https://github.com/kazeemayeed/vault-airgap
     type: application
     urls:
-    - https://kazeemayeed.github.io/vault-airgap-chart/vault-airgap-chart-1.3.0.tgz
+    - https://raw.githubusercontent.com/kazeemayeed/vault-airgap-chart/main/vault-airgap-chart-1.3.0.tgz
     version: 1.3.0
   - apiVersion: v2
     appVersion: 1.13.0
-    created: "2025-09-16T03:33:58.1160054-05:00"
+    created: "2025-09-16T10:27:41.698465646Z"
     description: A production-grade, air-gapped Helm chart for deploying Vault securely
       in restricted networks.
     digest: 5ca6ccdedaf82120998dbb36edd3e80ef7c3c5517f794e97c5d8bba6b52470d1
@@ -41,11 +62,11 @@ entries:
     - https://github.com/kazeemayeed/vault-airgap
     type: application
     urls:
-    - https://kazeemayeed.github.io/vault-airgap-chart/vault-airgap-chart-1.1.0.tgz
+    - https://raw.githubusercontent.com/kazeemayeed/vault-airgap-chart/main/vault-airgap-chart-1.1.0.tgz
     version: 1.1.0
   - apiVersion: v2
     appVersion: 1.13.0
-    created: "2025-09-16T03:33:58.1398578-05:00"
+    created: "2025-09-16T10:27:41.707233462Z"
     description: A production-grade, air-gapped Helm chart for deploying Vault securely
       in restricted networks.
     digest: c68a808660d21d6d1ad0843c6267e6872ae39afff2b7ab59f39a7fea32df61ca
@@ -57,6 +78,6 @@ entries:
     name: vault-airgap
     type: application
     urls:
-    - https://kazeemayeed.github.io/vault-airgap-chart/docs/vault-airgap-0.1.0.tgz
+    - https://raw.githubusercontent.com/kazeemayeed/vault-airgap-chart/main/docs/vault-airgap-0.1.0.tgz
     version: 0.1.0
-generated: "2025-09-16T03:33:58.1121813-05:00"
+generated: "2025-09-16T10:27:41.68165546Z"
