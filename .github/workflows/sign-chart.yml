@@ -1,0 +1,50 @@
+name: Sign Helm Chart
+
+on:
+  push:
+    branches:
+      - main  # run whenever you push to main
+
+jobs:
+  sign-chart:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout your repository
+      - uses: actions/checkout@v3
+
+      # Install Helm
+      - name: Install Helm
+        run: |
+          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+      # Install GPG
+      - name: Install GPG
+        run: sudo apt-get update && sudo apt-get install -y gnupg2
+
+      # Import GPG private key
+      - name: Import GPG key
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        run: |
+          echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+
+      # Package and sign Helm chart
+      - name: Package and Sign Chart
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: |
+          helm package ./vault-airgap-chart --sign --key "<KEY_ID>" --passphrase "$GPG_PASSPHRASE"
+          helm repo index . --url https://kazeemayeed.github.io/vault-airgap-chart/
+
+      # Push signed chart to GitHub Pages branch
+      - name: Push to GitHub Pages
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git checkout gh-pages || git checkout -b gh-pages
+          cp vault-airgap-chart-*.tgz .
+          cp index.yaml .
+          git add vault-airgap-chart-*.tgz index.yaml
+          git commit -m "Add signed Helm chart v1.1.0" || echo "No changes to commit"
+          git push origin gh-pages
