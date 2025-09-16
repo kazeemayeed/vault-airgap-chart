@@ -1,7 +1,7 @@
 name: Release Signed Helm Chart
 
 on:
-  workflow_dispatch:       # Manual trigger
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -23,16 +23,19 @@ jobs:
       - name: Install GPG
         run: sudo apt-get update && sudo apt-get install -y gnupg2
 
-      # 4. Import GPG key
+      # 4. Import GPG key into temporary keyring
       - name: Import GPG key
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
         run: |
           mkdir -p ~/.gnupg
+          chmod 700 ~/.gnupg
+          export GNUPGHOME=$(mktemp -d)
           echo "$GPG_PRIVATE_KEY" | gpg --batch --import
-          echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
+          echo "pinentry-mode loopback" >> $GNUPGHOME/gpg.conf
+          echo "GNUPGHOME=$GNUPGHOME" >> $GITHUB_ENV
 
-      # 5. Install yq (for version bump)
+      # 5. Install yq for version bump
       - name: Install yq
         run: sudo snap install yq
 
