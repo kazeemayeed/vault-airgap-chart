@@ -6,6 +6,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write  # Required for GITHUB_TOKEN to push
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -39,11 +42,13 @@ jobs:
           helm package .
           helm repo index . --url https://raw.githubusercontent.com/kazeemayeed/vault-airgap-chart/main/
 
-      # 6. Commit & Push changes
+      # 6. Commit & Push changes using GITHUB_TOKEN
       - name: Commit & Push changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add vault-airgap-*.tgz index.yaml Chart.yaml
           git commit -m "Release Helm chart version $(yq e '.version' Chart.yaml)" || echo "No changes to commit"
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/kazeemayeed/vault-airgap-chart.git HEAD:main
+          git push https://x-access-token:${GITHUB_TOKEN}@github.com/kazeemayeed/vault-airgap-chart.git HEAD:main
