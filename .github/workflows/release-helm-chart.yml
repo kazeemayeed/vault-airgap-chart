@@ -23,27 +23,27 @@ jobs:
       - name: Install GPG
         run: sudo apt-get update && sudo apt-get install -y gnupg2
 
-      # 4. Import GPG key into temporary keyring
+      # 4. Import GPG key from Base64
       - name: Import GPG key
         env:
-          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          GPG_PRIVATE_KEY_B64: ${{ secrets.GPG_PRIVATE_KEY_B64 }}
         run: |
           mkdir -p ~/.gnupg
           chmod 700 ~/.gnupg
           export GNUPGHOME=$(mktemp -d)
-          echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+          echo "$GPG_PRIVATE_KEY_B64" | base64 --decode | gpg --batch --import
           echo "pinentry-mode loopback" >> $GNUPGHOME/gpg.conf
           echo "GNUPGHOME=$GNUPGHOME" >> $GITHUB_ENV
 
-      # Optional: list keys to confirm
+      # 5. List imported keys (debug)
       - name: List imported GPG keys
         run: gpg --list-secret-keys --keyid-format LONG
 
-      # 5. Install yq for version bump
+      # 6. Install yq for version bump
       - name: Install yq
         run: sudo snap install yq
 
-      # 6. Update Chart version
+      # 7. Update Chart version (patch)
       - name: Update Chart version
         run: |
           CHART_FILE="./Chart.yaml"
@@ -53,16 +53,15 @@ jobs:
           yq e -i ".version = \"$NEW_VERSION\"" $CHART_FILE
           echo "Updated Chart version to $NEW_VERSION"
 
-      # 7. Package & Sign Helm Chart
+      # 8. Package & Sign Helm Chart
       - name: Package & Sign Helm Chart
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          echo "Signing Helm chart with temporary keyring"
           helm package . --sign --key "DD77F08007006629" --keyring $GNUPGHOME/pubring.kbx
           helm repo index . --url https://raw.githubusercontent.com/kazeemayeed/vault-airgap-chart/main/
 
-      # 8. Commit & Push changes
+      # 9. Commit & Push changes
       - name: Commit & Push changes
         run: |
           git config user.name "github-actions"
