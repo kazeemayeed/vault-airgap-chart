@@ -1,50 +1,47 @@
-name: Sign Helm Chart
+name: Release Signed Helm Chart
 
 on:
   push:
     branches:
-      - main  # run whenever you push to main
+      - main
 
 jobs:
-  sign-chart:
+  release:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout your repository
       - uses: actions/checkout@v3
 
-      # Install Helm
       - name: Install Helm
-        run: |
-          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+        run: curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
-      # Install GPG
       - name: Install GPG
         run: sudo apt-get update && sudo apt-get install -y gnupg2
 
-      # Import GPG private key
       - name: Import GPG key
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
         run: |
           echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+          echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
 
-      # Package and sign Helm chart
       - name: Package and Sign Chart
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          helm package ./vault-airgap-chart --sign --key "1A34BC022C84A24A7B599F5C0CE6668138414D27" --passphrase "$GPG_PASSPHRASE"
+          export GPG_TTY=$(tty)
+          helm package ./vault-airgap-chart \
+            --sign \
+            --key "DD77F08007006629"
           helm repo index . --url https://kazeemayeed.github.io/vault-airgap-chart/
 
-      # Push signed chart to GitHub Pages branch
       - name: Push to GitHub Pages
         run: |
-          git config user.name "kazeem"
-          git config user.email "kazeemayeed@gmail.com"
-          git checkout gh-pages || git checkout -b gh-pages
-          cp vault-airgap-chart-*.tgz .
-          cp index.yaml .
-          git add vault-airgap-chart-*.tgz index.yaml
-          git commit -m "Add signed Helm chart v1.1.0" || echo "No changes to commit"
-          git push origin gh-pages
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git fetch origin main || true
+          git checkout main
+          cp vault-airgap-*.tgz vault-airgap-*.prov index.yaml .
+          git add vault-airgap-*.tgz vault-airgap-*.prov index.yaml
+          git commit -m "Release signed chart" || echo "No changes to commit"
+          git push
