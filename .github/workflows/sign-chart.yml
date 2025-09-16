@@ -1,14 +1,12 @@
-name: Release Signed Helm Chart
+name: Package & Sign Helm Chart
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
-  release:
+  sign:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
 
@@ -25,22 +23,19 @@ jobs:
           echo "$GPG_PRIVATE_KEY" | gpg --batch --import
           echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
 
-      - name: Package and Sign Chart
+      - name: Package & Sign Helm Chart
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          export GPG_TTY=$(tty)
-          helm package ./vault-airgap-chart \
-            --sign \
-            --key "DD77F08007006629"
-          helm repo index . --url https://kazeemayeed.github.io/vault-airgap-chart/
+          helm package ./vault-airgap-chart --sign --key "DD77F08007006629"
 
-      - name: Push to main
+      - name: Update Helm repo index
+        run: helm repo index . --url https://raw.githubusercontent.com/kazeemayeed/vault-airgap-chart/main/
+      
+      - name: Commit & Push
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git checkout main
-          cp vault-airgap-*.tgz vault-airgap-*.prov index.yaml .
           git add vault-airgap-*.tgz vault-airgap-*.prov index.yaml
           git commit -m "Release signed chart" || echo "No changes to commit"
           git push origin main
