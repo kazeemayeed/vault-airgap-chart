@@ -5,7 +5,7 @@ metadata:
   labels:
     category: helm
 spec:
-  repositoryID: ab751316-b24c-43b3-9cad-a9158ff14558
+  repositoryID: "ab751316-b24c-43b3-9cad-a9158ff14558"
   type: helm
   url: https://kazeemayeed.github.io/vault-airgap-chart/
 owners:
