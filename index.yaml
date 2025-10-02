@@ -3,7 +3,28 @@ entries:
   vault-airgap:
   - apiVersion: v2
     appVersion: 1.13.0
-    created: "2025-10-02T04:23:08.781146098Z"
+    created: "2025-10-02T04:39:12.762775033Z"
+    description: A production-grade, air-gapped Helm chart for deploying Vault securely
+      in restricted networks.
+    digest: 7217f9b14a35288db3d74e0624582e1f1ff656bb9e500104482303bc285d19fd
+    home: https://www.vaultproject.io/
+    icon: https://raw.githubusercontent.com/kazeemayeed/vault-airgap-chart/main/vault-icon.png
+    keywords:
+    - vault
+    - airgap
+    - security
+    maintainers:
+    - name: kazeem Mohammed
+    name: vault-airgap
+    sources:
+    - https://github.com/kazeemayeed/vault-airgap
+    type: application
+    urls:
+    - https://raw.githubusercontent.com/kazeemayeed/vault-airgap-chart/main/vault-airgap-1.3.7.tgz
+    version: 1.3.7
+  - apiVersion: v2
+    appVersion: 1.13.0
+    created: "2025-10-02T04:39:12.750408996Z"
     description: A production-grade, air-gapped Helm chart for deploying Vault securely
       in restricted networks.
     digest: a90cbfc9332656a1c4a32ddd512325f306cd985df9c5733adbcf1972250218cb
@@ -24,7 +45,7 @@ entries:
     version: 1.3.6
   - apiVersion: v2
     appVersion: 1.13.0
-    created: "2025-10-02T04:23:08.777361124Z"
+    created: "2025-10-02T04:39:12.736316639Z"
     description: A production-grade, air-gapped Helm chart for deploying Vault securely
       in restricted networks.
     digest: 0f041ac8361cd8fe82c40ed9b71964f37f938544d342a64701a76a35d5f54314
@@ -45,7 +66,7 @@ entries:
     version: 1.3.5
   - apiVersion: v2
     appVersion: 1.13.0
-    created: "2025-10-02T04:23:08.774949915Z"
+    created: "2025-10-02T04:39:12.734002223Z"
     description: A production-grade, air-gapped Helm chart for deploying Vault securely
       in restricted networks.
     digest: b0e81ec7db3c46475e3297a6997d0acc0fce3f2372ea696f336c9eed5cf50c02
@@ -64,4 +85,4 @@ entries:
     urls:
     - https://raw.githubusercontent.com/kazeemayeed/vault-airgap-chart/main/vault-airgap-1.3.4.tgz
     version: 1.3.4
-generated: "2025-10-02T04:23:08.77224739Z"
+generated: "2025-10-02T04:39:12.73205088Z"
